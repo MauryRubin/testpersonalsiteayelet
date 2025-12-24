@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayelet Joelle Portfolio</title>
+    
+    <!-- Import Google Font: Libre Baskerville -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS for utility classes (optional mixed usage) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* --- 1. GENERAL STYLES --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #000000; /* Black Background */
+            color: #ffffff;
+            font-family: 'Lato', sans-serif; /* Secondary font for body text */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        a {
+            text-decoration: none;
+            color: white;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #aaaaaa;
+        }
+
+        /* --- 2. NAVIGATION --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 4rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            background-color: rgba(0, 0, 0, 0.95); /* High opacity black */
+            z-index: 1000;
+            border-bottom: 1px solid #222;
+        }
+
+        .logo {
+            font-family: 'Libre Baskerville', serif; /* Requested Font */
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Hamburger Icon (Hidden on Desktop) */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 1002;
+        }
+
+        .bar {
+            width: 25px;
+            height: 2px;
+            background-color: white;
+            transition: 0.3s;
+        }
+
+        /* Hamburger Animation when Active */
+        .hamburger.active .bar:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 6px);
+        }
+        .hamburger.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active .bar:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -6px);
+        }
+
+        /* --- 3. PORTFOLIO GRID --- */
+        .container {
+            margin-top: 100px; /* Space for fixed header */
+            padding: 20px 40px;
+            max-width: 100%;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 Columns */
+            gap: 20px;
+        }
+
+        .portfolio-item {
+            position: relative;
+            width: 100%;
+            padding-bottom: 135%; /* Aspect ratio for portrait images */
+            overflow: hidden;
+            background-color: #111;
+            cursor: pointer;
+            
+            /* Scroll Animation Initial State */
+            opacity: 0;
+            transform: translateY(60px);
+            transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                        transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* Class added by JS for scroll reveal */
+        .portfolio-item.reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .portfolio-item img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            filter: grayscale(20%);
+        }
+
+        /* --- 4. HOVER OVERLAY (CREDITS) --- */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            padding: 20px;
+            backdrop-filter: blur(2px); /* Slight blur on the image behind text */
+        }
+
+        .portfolio-item:hover .overlay {
+            opacity: 1;
+        }
+
+        .portfolio-item:hover img {
+            transform: scale(1.05); /* Subtle zoom on hover */
+            filter: grayscale(0%);
+        }
+
+        .credit-name {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            transform: translateY(10px);
+            transition: transform 0.4s ease;
+        }
+
+        .credit-role {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #dddddd;
+            transform: translateY(10px);
+            transition: transform 0.4s ease 0.1s; /* Slight delay */
+        }
+
+        .portfolio-item:hover .credit-name,
+        .portfolio-item:hover .credit-role {
+            transform: translateY(0);
+        }
+
+        /* --- 5. MOBILE RESPONSIVENESS --- */
+        @media (max-width: 1024px) {
+            .portfolio-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 columns on tablet */
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 1.5rem 2rem;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            /* Mobile Menu Styles */
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: 0;
+                height: 100vh;
+                width: 100%;
+                background-color: #000;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                transform: translateX(100%); /* Hidden off-screen */
+                transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+                z-index: 1001; /* Behind hamburger, above content */
+            }
+
+            .nav-links.active {
+                transform: translateX(0); /* Slide in */
+            }
+
+            .nav-links li {
+                opacity: 0;
+                transform: translateY(20px);
+                transition: opacity 0.3s ease, transform 0.3s ease;
+            }
+
+            .nav-links.active li {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            
+            /* Stagger animation for links */
+            .nav-links.active li:nth-child(1) { transition-delay: 0.1s; }
+            .nav-links.active li:nth-child(2) { transition-delay: 0.2s; }
+            .nav-links.active li:nth-child(3) { transition-delay: 0.3s; }
+
+            .nav-links a {
+                font-size: 1.5rem; /* Larger text on mobile */
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            /* 1 Column on Mobile */
+            .portfolio-grid {
+                grid-template-columns: repeat(1, 1fr); 
+                gap: 40px; /* More spacing on mobile */
+            }
+            
+            /* On mobile, standard hover logic doesn't work well. 
+               We can make the credit visible always or on tap. 
+               Here we keep it as tap/active or visual hierarchy. */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="logo"><a href="#">Ayelet Joelle</a></div>
+        
+        <ul class="nav-links">
+            <li><a href="#work">Work</a></li>
+            <li><a href="#styling">Personal Styling</a></li>
+            <li><a href="#about">About</a></li>
+        </ul>
+
+        <div class="hamburger">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+    </nav>
+
+    <!-- PORTFOLIO GRID -->
+    <div class="container" id="work">
+        <div class="portfolio-grid" id="grid">
+            <!-- Items will be injected here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- FOOTER (Optional simple footer) -->
+    <footer style="text-align: center; padding: 4rem 2rem; color: #555; font-size: 0.8rem;">
+        &copy; 2024 Ayelet Joelle. All Rights Reserved.
+    </footer>
+
+    <script>
+        // --- 1. GENERATE 40 PORTFOLIO ITEMS ---
+        const gridContainer = document.getElementById('grid');
+        
+        // I will generate 40 items using a loop to keep the HTML clean
+        for (let i = 1; i <= 40; i++) {
+            const item = document.createElement('div');
+            item.classList.add('portfolio-item');
+            
+            // Using placeholder images (randomized via ID so they look different)
+            // Using unsplash source for high quality fashion-y placeholders
+            const imgUrl = `https://images.unsplash.com/photo-${getPhotoId(i)}?auto=format&fit=crop&w=600&q=80`;
+
+            item.innerHTML = `
+                <img src="${imgUrl}" alt="Portfolio Image ${i}" loading="lazy">
+                <div class="overlay">
+                    <div class="credit-name">Ayelet Joelle</div>
+                    <div class="credit-role">Stylist & Creative Direction</div>
+                </div>
+            `;
+            
+            gridContainer.appendChild(item);
+        }
+
+        // Helper function to return some reliable Unsplash IDs for portrait fashion/art style
+        function getPhotoId(index) {
+            const ids = [
+                "1534528741775-53994a69daeb", "1515886657613-9f3515b0c78f", "1494790108377-be9c29b29330",
+                "1529139574466-a302d20525b5", "1503342394128-c104d54dba01", "1532453288672-3a27e9be9efd",
+                "1500917293891-ef795e70e1f6", "1483985988355-763728e1935b", "1512353087831-50e745091a02",
+                "1531746020798-e6953c6e8e04", "1506644555661-c1e1c0e01098", "1502323777036-f29e3972d82f",
+                "1492633426602-9615b49242b7", "1517841905240-472988babdf9", "1524504388940-b1c1722653e1",
+                "1504194952298-4d639a48e727", "1485230984865-1c888c38558e", "1512413914633-b514302e2399",
+                "1496747611176-849101f087f1", "1540221652-3283995f36e3"
+            ];
+            // Cycle through IDs if we go over the list length
+            return ids[index % ids.length];
+        }
+
+        // --- 2. HAMBURGER MENU TOGGLE ---
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        const links = document.querySelectorAll('.nav-links li');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                hamburger.classList.remove('active');
+            });
+        });
+
+        // --- 3. SCROLL REVEAL ANIMATION ---
+        // We use Intersection Observer to detect when images enter the viewport
+        const observerOptions = {
+            threshold: 0.1, // Trigger when 10% of the item is visible
+            rootMargin: "0px 0px -50px 0px" // Offset slightly so it triggers before bottom
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // Add a tiny delay based on column position for a "wave" effect if multiple load at once
+                    setTimeout(() => {
+                        entry.target.classList.add('reveal');
+                    }, 50); 
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Target all portfolio items we just created
+        const items = document.querySelectorAll('.portfolio-item');
+        items.forEach(item => {
+            observer.observe(item);
+        });
+    </script>
+</body>
+</html>
